@@ -5,7 +5,7 @@ logger = logging.getLogger('h42-gaming-wol-agent')
 def config_json(filename="/opt/cloud/gaming/agent/agent-wol.json"):
     logger.info("Load configuration : %s ", filename)
     fd = open(filename)
-    data = json.loaf(fd)
+    data = json.load(fd)
     fd.close()
     logger.debug("Configuration: %s", str(data))
     return data
@@ -14,7 +14,7 @@ def get_interface_ip(conf):
     adrs = netifaces.ifaddresses(conf['wol_interface'])
     iface = adrs[netifaces.AF_INET][0]
     conf['wol_interface_addr'] = iface['addr']
-    logger.debug("Update interface address: %s", str(data))
+    logger.debug("Update interface address: %s", str(conf))
     return conf
 
 def on_connect(client, userdata, flags, rc):
@@ -39,7 +39,12 @@ def main():
 
     client.connect(conf['mqtt_server'], 1883, 60)
 
-    client.loop_forever()
+    try:
+        logger.info("H42 Gaming WoL Agent Started")
+        client.loop_forever()
+    except KeyboardInterrupt:
+        logger.info("H42 Gaming WoL Agent Stopped")
+        pass
 
 if __name__ == "__main__":
     main()
