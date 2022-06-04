@@ -1,4 +1,4 @@
-import json, os.path, wakeonlan, logging, netifaces
+import sys, json, os.path, wakeonlan, logging, netifaces
 import paho.mqtt.client as mqtt
 logger = logging.getLogger('h42-gaming-wol-agent')
 
@@ -28,6 +28,8 @@ def on_message(client, userdata, msg):
     wakeonlan.send_magic_packet(data['mac'], interface=userdata['conf']['wol_interface_addr'])
 
 def main(): 
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
     conf = config_json()
     conf = get_interface_ip(conf)
 
