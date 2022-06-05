@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-51-!8hl8#2gx+9&cd%v43g1x#9$7w3)!c3819z%qhxu6iu!x%y'
+SECRET_KEY = os.getenv('DJANGO_SECRET', default='django-insecure-51-!8hl8#2gx+9&cd%v43g1x#9$7w3)!c3819z%qhxu6iu!x%y')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.getenv('DJANGO_ENV', default="dev") == "dev")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.getenv('H42GAMING_HOSTNAME',default='127.0.0.1'),]
 
 
 # Application definition
@@ -106,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Paris'
+TIME_ZONE = os.getenv('TZ',default='UTC')
 
 USE_I18N = True
 
@@ -131,4 +131,4 @@ LOGIN_URL = 'accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 
 #
-MQTT_SERVER='2a0e:e701:1123:0020:7::1883'
+MQTT_SERVER=os.getenv('MQTT_SERVER',default='::1')
