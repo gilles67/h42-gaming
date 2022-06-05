@@ -17,5 +17,8 @@ COPY --from=base /opt/wheels /opt/wheels
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends make && make -C /h42gaming setup
 
-CMD ["/h42gaming/run-console"]
+EXPOSE 8000/tcp
 
+WORKDIR /h42gaming
+
+CMD ["/h42gaming/run-console"]
