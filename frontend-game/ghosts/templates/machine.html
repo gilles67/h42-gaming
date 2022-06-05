@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+{% if gm %}
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"> Machine ({{ gm.name }}) <i class="fa-brands fa-windows"></i></h1>
+    </div>
+
+    <div class="pt-3 pb-2"  >
+        <h2 class="h3"> <i class="fa-brands fa-ubuntu"></i> Hypervisor </i></h2>
+        <div>
+            <a href="/gaming/machine/{{ gm.id }}/hypervisor_wol" class="btn btn-success"><i class="fa-solid fa-fire-flame-curved"></i> Start (WoL)</a>
+            <a href="/gaming/machine/{{ gm.id }}/hypervisor_reboot" class="btn btn-primary"><i class="fa-solid fa-repeat"></i> Reboot</a>
+            <a href="/gaming/machine/{{ gm.id }}/hypervisor_poweroff" class="btn btn-danger"><i class="fa-solid fa-power-off"></i> Shutdown</a>
+        </div>
+    </div>
+
+    <div class="pt-3 pb-2"  >
+        <h2 class="h3"> <i class="fa-brands fa-windows"></i> Gaming Machine </i></h2>
+        <div>
+            <a href="/gaming/machine/{{ gm.id }}/machine_start" class="btn btn-success"><i class="fa-solid fa-fire-flame-curved"></i> Start</a>
+            <a href="/gaming/machine/{{ gm.id }}/machine_reboot" class="btn btn-primary"><i class="fa-solid fa-repeat"></i> Reboot</a>
+            <a href="/gaming/machine/{{ gm.id }}/machine_shutdown" class="btn btn-danger"><i class="fa-solid fa-power-off"></i> Shutdown</a>
+            <a href="/gaming/machine/{{ gm.id }}/machine_poweroff" class="btn btn-danger"><i class="fa-solid fa-meteor"></i> Unplug power</a>
+        </div>
+    </div>
+
+
+{% else %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Machine</h1>
+    </div>
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="fs-2 fa-solid fa-triangle-exclamation"></i> <div class="p-1">The gaming machine is not avaible !</div>
+    </div>
+{% endif %}
+
+{% endblock %}

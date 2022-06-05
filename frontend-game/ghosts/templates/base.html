@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>H42 Gaming - {{ name }}</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/static/css/fa-all.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/static/css/ghosts.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/static/css/base.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="game-title navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/">H42 Gaming Plateform</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="w-100"></div>
+        <div class="navbar-nav"><div class="nav-item text-nowrap">&nbsp;</div></div>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="/gaming/">
+                        <i class="fa-solid fa-house"></i> Dashboard
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/accounts/logout/?next=/">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+                </div>
+              </nav>
+
+              <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 ">
+                {% block content %}
+                {% endblock content %}
+              </main>
+        </div>
+    </div>
+    <script src="/static/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

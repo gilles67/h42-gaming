@@ -1,0 +1,8 @@
+@font-face {
+    font-family: GamePlayed;
+    src: url("/static/webfonts/game_played.otf") format("opentype");
+}
+
+.game-title {
+    font-family: GamePlayed;
+} 

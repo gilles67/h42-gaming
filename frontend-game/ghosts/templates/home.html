@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Machines</h1>
+</div>
+
+{% if game_machine_list %}
+    <div class="list-group">
+    {% for machine in game_machine_list %}
+    <a href="/gaming/machine/{{ machine.id }}/" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+        <div class="d-flex gap-2 w-100 justify-content-between">
+            <div class="d-flex gap-2">
+                <i class="fs-1 fa-brands fa-windows"></i>
+                <div>
+                    <h6 class="mb-0">{{ machine.name }}</h6>
+                    <p class="mb-0 opacity-75">Hypervisor: {{ machine.host.name }}</p>
+                </div>
+            </div>
+            
+            <small class="opacity-50 text-nowrap">shutdown</small>
+          </div>
+    </a>
+    {% endfor %}
+    </div>
+{% else %}
+    <p>No machine avaible for user {{ username }}.</p>
+{% endif %}
+
+{% endblock %}

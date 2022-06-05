@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>H42 Gaming - Login</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/static/css/fa-all.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/static/css/registration-login.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/static/css/ghosts.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+
+<body class="text-center">
+    <main class="form-signin">
+        <h2 class="game-title">H42 Gaming<br/>Plateform</h2>
+        {% if form.errors %}
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="fs-2 fa-solid fa-triangle-exclamation"></i>
+            <div>{{ error }}</div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-floating">
+                <input type="text" name="username" class="form-control" id="id_username" placeholder="john117" required="">
+                <label for="id_username"><i class="fa-solid fa-user"></i> Username</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" name="password" class="form-control" id="id_password" placeholder="Password" required="" autocomplete="current-password">
+                <label for="id_password"><i class="fa-solid fa-key"></i> Password</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Log In <i class="fa-brands fa-xbox"></i></button>
+            <!-- <hr />
+            <a href="#" class="w-100 btn btn-lg btn-success">Log In with H42.one</a> -->
+        </form>
+    </main>
+</body>
+</html>
