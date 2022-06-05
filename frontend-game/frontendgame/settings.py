@@ -23,10 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET', default='django-insecure-51-!8hl8#2gx+9&cd%v43g1x#9$7w3)!c3819z%qhxu6iu!x%y')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.getenv('DJANGO_ENV', default="dev") == "dev")
+DEBUG = (os.getenv('DJANGO_ENV', default="devel") == "devel")
 
 ALLOWED_HOSTS = [os.getenv('H42GAMING_HOSTNAME',default='127.0.0.1'),]
 
+CSRF_TRUSTED_ORIGINS = [ "https://{0}".format(os.getenv('H42GAMING_HOSTNAME',default='127.0.0.1')), "http://127.0.0.1:8000/"]
 
 # Application definition
 
@@ -118,7 +119,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    os.path.join(BASE_DIR, "static"),
 ]
 
 
