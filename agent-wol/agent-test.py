@@ -1,7 +1,17 @@
-import json
-import paho.mqtt.client as mqtt
-client = mqtt.Client()
-client.connect('2a0e:e701:1123:0020:7::1883', 1883, 60)
-data={}
-data["mac"] = "d8:bb:c1:02:32:4a"
-client.publish("h42/gaming/wol", payload=json.dumps(data))
+import json, zmq
+#import paho.mqtt.client as mqtt
+
+context = zmq.Context()
+context.setsockopt(zmq.RCVTIMEO, 1000)
+context.setsockopt(zmq.SNDTIMEO, 1000)
+context.setsockopt(zmq.LINGER, 0)
+socket = context.socket(zmq.REQ)
+socket.connect ("tcp://localhost:6661")
+
+socket.send_json({"mac":"d8:bb:c1:02:32:4a", "query":"wakeonlan"})
+print(socket.recv_json())
+
+socket.send_json({"mac":"d8:bb:c1:02:32:4a", "query":"ping"})
+print(socket.recv_json())
+
+#socket.close()
