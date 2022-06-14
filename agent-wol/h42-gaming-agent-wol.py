@@ -14,13 +14,13 @@ class RPCHelper:
         self.zmq_context = zmq.Context()
         self.socket = self.zmq_context.socket(zmq.REP)
 
-    def register(self, query_name, function):
-        self.functions[query_name] = function
+    def register(self, cmd_name, function):
+        self.functions[cmd_name] = function
 
-    def _query(self, req):
-        if 'query' in req: 
-            if req['query'] in self.functions: 
-                res = self.functions[req['query']](req, userdata=self.userdata)
+    def _cmd(self, req):
+        if 'cmd' in req: 
+            if req['cmd'] in self.functions: 
+                res = self.functions[req['cmd']](req, userdata=self.userdata)
                 if not res:
                     res = {'error': 'no function returns'}
                 return res
@@ -30,13 +30,14 @@ class RPCHelper:
             self.socket.bind("tcp://{0}:{1}".format(self.conf['bind'], self.conf['port']))
             while True:
                 try: 
-                    self.socket.send_json(self._query(self.socket.recv_json()))
+                    self.socket.send_json(self._cmd(self.socket.recv_json()))
                     time.sleep(0.1)
-                except KeyboardInterrupt: 
+                except KeyboardInterrupt as ki: 
                     break
-        except KeyboardInterrupt:
+                    raise ki
+        except KeyboardInterrupt as ki:
             self.socket.close()
-
+            raise ki
 
 def config_json(filename="/opt/cloud/gaming/agent/agent-wol.json"):
     logger.info("Load configuration : %s ", filename)
@@ -53,14 +54,12 @@ def get_interface_ip(conf):
     logger.debug("Update interface address: %s", str(conf))
     return conf
 
-def on_connect(client, userdata, flags, rc):
-    logger.info("Connected with result code %s ", str(rc))
-    client.subscribe("h42/gaming/wol")
-
 def on_wakeonlan(req, userdata):
     logger.info("on wakeonlan Data: %s", str(req))
     wakeonlan.send_magic_packet(req['mac'], interface=userdata['conf']['wol_interface_addr'])
-    req['status'] = 'sent'
+    userdata.update({'status': { req['mac']: 'starting'}})
+    logger.debug("userdata: %s", str(userdata))
+    req['status'] = userdata['status'][req['mac']]
     return req
 
 def on_ping(req, userdata):
@@ -72,8 +71,18 @@ def on_ping(req, userdata):
     host =  ping(str(ip), count=1)
     req ['is_alive'] = host.is_alive
     req ['avg_rtt'] = host.avg_rtt
-    return req
 
+    if host.is_alive:
+        userdata.update({'status': { req['mac']: 'ok'}})
+    elif 'status' in userdata:
+        if userdata['status'][req['mac']] == 'starting':
+            userdata.update({'status': { req['mac']: 'starting'}})
+    else:
+        userdata.update({'status': { req['mac']: 'poweroff'}})
+
+    req['status'] = userdata['status'][req['mac']]
+    logger.debug("userdata: %s", str(userdata))
+    return req
 
 
 def main(): 

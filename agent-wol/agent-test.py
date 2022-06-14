@@ -8,10 +8,10 @@ context.setsockopt(zmq.LINGER, 0)
 socket = context.socket(zmq.REQ)
 socket.connect ("tcp://localhost:6661")
 
-socket.send_json({"mac":"d8:bb:c1:02:32:4a", "query":"wakeonlan"})
+socket.send_json({"mac":"d8:bb:c1:02:32:4a", "cmd":"wakeonlan"})
 print(socket.recv_json())
 
-socket.send_json({"mac":"d8:bb:c1:02:32:4a", "query":"ping"})
+socket.send_json({"mac":"d8:bb:c1:02:32:4a", "cmd":"ping"})
 print(socket.recv_json())
 
-#socket.close()
+socket.close()
