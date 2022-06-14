@@ -11,12 +11,25 @@
     </div>
 
     <div class="pt-3 pb-2"  >
-        <h2 class="h3"> <i class="fa-brands fa-ubuntu"></i> Hypervisor </i></h2>
+        {% if gm.host.wol_status %}
+        <h2 class="h3"> <i class="fa-brands fa-ubuntu"></i> Hypervisor ({{ gm.host.wol_status.status }})</i></h2>
         <div>
-            <a href="/gaming/machine/{{ gm.id }}/hypervisor_wol" class="btn btn-success"><i class="fa-solid fa-fire-flame-curved"></i> Start (WoL)</a>
+            {% if gm.host.wol_status.status == "ok" %}
+            <a href="/gaming/machine/{{ gm.id }}/hypervisor_wol" class="btn btn-success" disabled="disabled"><i class="fa-solid fa-fire-flame-curved"></i> Start (WoL)</a>
             <a href="/gaming/machine/{{ gm.id }}/hypervisor_reboot" class="btn btn-primary"><i class="fa-solid fa-repeat"></i> Reboot</a>
             <a href="/gaming/machine/{{ gm.id }}/hypervisor_poweroff" class="btn btn-danger"><i class="fa-solid fa-power-off"></i> Shutdown</a>
+            {% elif gm.host.wol_status.status == "starting"  %}
+            <a href="/gaming/machine/{{ gm.id }}/hypervisor_wol" class="btn btn-success" role="button" aria-disabled="true" ><i class="fa-solid fa-fire-flame-curved"></i> Start (WoL)</a>
+            {% else %}
+            <a href="/gaming/machine/{{ gm.id }}/hypervisor_wol" class="btn btn-success" disabled="disabled"><i class="fa-solid fa-fire-flame-curved"></i> Start (WoL)</a>
+            {% endif %}
         </div>
+        {% else %}
+        <h2 class="h3 mb-3"><i class="fa-brands fa-ubuntu"></i> Hypervisor</i></h2>
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="fs-2 fa-solid fa-triangle-exclamation"></i> <div class="p-1">WakeonLan agent not avaible !</div>
+        </div>        
+        {% endif %}
     </div>
 
     <div class="pt-3 pb-2"  >

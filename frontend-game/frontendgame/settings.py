@@ -133,3 +133,6 @@ LOGIN_REDIRECT_URL = '/'
 
 #
 MQTT_SERVER=os.getenv('MQTT_SERVER',default='::1')
+
+#
+AGENT_WOL=os.getenv('AGENT_WOL',default='127.0.0.1')

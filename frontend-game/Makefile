@@ -8,7 +8,7 @@ wheels:
 setup:
 	apt-get update -y
 	apt-get upgrade -y
-	apt-get install -y --no-install-recommends python3 python3-paho-mqtt python3-distutils python3-pip tzdata
+	apt-get install -y --no-install-recommends python3 python3-paho-mqtt python3-zmq python3-distutils python3-pip tzdata
 	apt-get -y autoremove
 	apt-get clean
 	pip3 install -v --no-index --find-links=/opt/wheels -r /h42gaming/requirements.txt

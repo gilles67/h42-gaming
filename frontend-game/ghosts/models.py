@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.conf import settings
+from .utils.agents import agentWol
 
 
 class Hypervisor(models.Model):
@@ -10,6 +11,15 @@ class Hypervisor(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def wol_status(self):
+        agent = agentWol.current()
+        return agent.ping(self.mac)
+
+    def wol_start(self):
+        agent = agentWol.current()
+        return agent.wakeonlan(self.mac)
 
 class GameMachine(models.Model):
     host = models.ForeignKey(Hypervisor, on_delete=models.CASCADE)

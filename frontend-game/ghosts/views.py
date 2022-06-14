@@ -33,6 +33,8 @@ def machine_cmd(request, machine_id, machine_cmd):
 
 
     if gm:
+        if machine_cmd == 'hypervisor_wol':
+            gm.host.wol_start()
         return redirect('/gaming/machine/{0}/'.format(gm.id))
     else:
         return redirect('/')
