@@ -1,18 +1,42 @@
-import sys, json, os.path, wakeonlan, logging, netifaces, zmq, time
+import sys, json, os.path, wakeonlan, logging, netifaces, time, socket
 from icmplib import ping
 from netaddr import EUI
+from http.server import BaseHTTPRequestHandler, HTTPServer
 logger = logging.getLogger('h42-gaming-wol-agent')
+
+class HTTPServerV6(HTTPServer):
+    address_family = socket.AF_INET6
+
+class RCPServer(BaseHTTPRequestHandler):
+    _helper = None
+
+    def do_GET(self):
+        self.send_response(400)
+        self.send_header('Content-type', 'text/text')
+        self.end_headers()
+        self.wfile.write('Bad request ! GET : {0}'.format(self.path).encode())
+
+    def do_POST(self):
+        length = int(self.headers.get('Content-Length', 0))
+        body = json.loads(self.rfile.read(length))
+
+        res = RCPServer._helper._cmd(body)
+
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(res).encode())
+
+    @classmethod
+    def setHelper(cls, helper):
+        cls._helper = helper
 
 class RPCHelper:
 
-    def __init__(self, bind='*', port=6661, userdata=None):
+    def __init__(self, userdata=None):
         self.conf = {}
-        self.conf['bind'] = bind
-        self.conf['port'] = port
         self.functions = {}
         self.userdata = userdata
-        self.zmq_context = zmq.Context()
-        self.socket = self.zmq_context.socket(zmq.REP)
 
     def register(self, cmd_name, function):
         self.functions[cmd_name] = function
@@ -24,20 +48,6 @@ class RPCHelper:
                 if not res:
                     res = {'error': 'no function returns'}
                 return res
-
-    def loop_forever(self):
-        try:
-            self.socket.bind("tcp://{0}:{1}".format(self.conf['bind'], self.conf['port']))
-            while True:
-                try: 
-                    self.socket.send_json(self._cmd(self.socket.recv_json()))
-                    time.sleep(0.1)
-                except KeyboardInterrupt as ki: 
-                    break
-                    raise ki
-        except KeyboardInterrupt as ki:
-            self.socket.close()
-            raise ki
 
 def config_json(filename="/opt/cloud/gaming/agent/agent-wol.json"):
     logger.info("Load configuration : %s ", filename)
@@ -75,8 +85,11 @@ def on_ping(req, userdata):
     if host.is_alive:
         userdata.update({'status': { req['mac']: 'ok'}})
     elif 'status' in userdata:
-        if userdata['status'][req['mac']] == 'starting':
-            userdata.update({'status': { req['mac']: 'starting'}})
+        if req['mac'] in userdata['status']:
+            if userdata['status'][req['mac']] == 'starting':
+                userdata.update({'status': { req['mac']: 'starting'}})
+        else:
+            userdata.update({'status': { req['mac']: 'poweroff'}})    
     else:
         userdata.update({'status': { req['mac']: 'poweroff'}})
 
@@ -95,9 +108,12 @@ def main():
     rpc.register('wakeonlan', on_wakeonlan)
     rpc.register('ping', on_ping)
 
+    RCPServer.setHelper(rpc)
+    webServer = HTTPServerV6(('::', 6661), RCPServer)
+
     try:
         logger.info("H42 Gaming WoL Agent Started")
-        rpc.loop_forever()
+        webServer.serve_forever()
     except KeyboardInterrupt:
         logger.info("H42 Gaming WoL Agent Stopped")
         pass
